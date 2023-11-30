@@ -1,8 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:todo_rest_api/screens/add_page.dart';
+import 'package:todo_rest_api/services/todo_services.dart';
 
 class TodoListPage extends StatefulWidget {
   const TodoListPage({super.key});
@@ -28,64 +26,54 @@ class _TodooListPageState extends State<TodoListPage> {
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const AddTodoPage(),
-            ),
-          );
-          setState(() {
-            isLoading = true;
-          });
-          fetchTodo();
-        },
+        onPressed: navigatetoAddPage,
         label: const Text('Add Todo'),
       ),
       body: Visibility(
         visible: isLoading,
-        child: Center(child: CircularProgressIndicator()),
+        child: const Center(child: CircularProgressIndicator()),
         replacement: RefreshIndicator(
           onRefresh: fetchTodo,
-          child: ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                final item = items[index] as Map;
-                final id = item['_id'] as String;
-                return ListTile(
-                  leading: CircleAvatar(child: Text('${index + 1}')),
-                  title: Text(item['title']),
-                  subtitle: Text(item['description']),
-                  trailing: PopupMenuButton(
-                    onSelected: (value) {
-                      if (value == 'edit') {
-                        //open the edit page
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const AddTodoPage(),
-                          ),
-                        );
-                      } else if (value == 'delete') {
-                        //delete the todo
-                        deteletById(id);
-                      }
-                    },
-                    itemBuilder: (context) {
-                      return [
-                        PopupMenuItem(
-                          child: Text('Edit'),
-                          value: 'edit',
-                        ),
-                        PopupMenuItem(
-                          child: Text('Delete'),
-                          value: 'delete',
-                        )
-                      ];
-                    },
-                  ),
-                );
-              }),
+          child: Visibility(
+            visible: items.isNotEmpty,
+            replacement: const Center(child: Text('No ToDo Item')),
+            child: ListView.builder(
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  final item = items[index] as Map;
+                  final id = item['_id'] as String;
+                  return Card(
+                    child: ListTile(
+                      leading: CircleAvatar(child: Text('${index + 1}')),
+                      title: Text(item['title']),
+                      subtitle: Text(item['description']),
+                      trailing: PopupMenuButton(
+                        onSelected: (value) {
+                          if (value == 'edit') {
+                            //open the edit page
+                            navigatetoEditPage(item);
+                          } else if (value == 'delete') {
+                            //delete the todo
+                            deteletById(id);
+                          }
+                        },
+                        itemBuilder: (context) {
+                          return [
+                            const PopupMenuItem(
+                              child: Text('Edit'),
+                              value: 'edit',
+                            ),
+                            const PopupMenuItem(
+                              child: Text('Delete'),
+                              value: 'delete',
+                            )
+                          ];
+                        },
+                      ),
+                    ),
+                  );
+                }),
+          ),
         ),
       ),
     );
@@ -93,10 +81,8 @@ class _TodooListPageState extends State<TodoListPage> {
 
   Future<void> deteletById(String id) async {
     //delete the item
-    final url = 'https://api.nstack.in/v1/todos/$id';
-    final uri = Uri.parse(url);
-    final resp = await http.delete(uri);
-    if (resp.statusCode == 200) {
+    final success = await TodoService.deteletById(id);
+    if (success) {
       //remove from api
       final filtered = items.where((element) => element['_id'] != id).toList();
       setState(() {
@@ -108,15 +94,13 @@ class _TodooListPageState extends State<TodoListPage> {
   }
 
   Future<void> fetchTodo() async {
-    final url = 'https://api.nstack.in/v1/todos?page=1&limit=10';
-    final uri = Uri.parse(url);
-    final resp = await http.get(uri);
-    if (resp.statusCode == 200) {
-      final json = jsonDecode(resp.body) as Map;
-      final result = json['items'] as List;
+    final resp = await TodoService.fetchTodo();
+    if (resp != null) {
       setState(() {
-        items = result;
+        items = resp;
       });
+    } else {
+      showMessage('Something went wrong');
     }
     setState(() {
       isLoading = false;
@@ -126,5 +110,27 @@ class _TodooListPageState extends State<TodoListPage> {
   void showMessage(String message) {
     final snackBar = SnackBar(content: Text(message));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  Future<void> navigatetoAddPage() async {
+    final route = MaterialPageRoute(
+      builder: (context) => const AddTodoPage(),
+    );
+    Navigator.push(context, route);
+    setState(() {
+      isLoading = true;
+    });
+    fetchTodo();
+  }
+
+  Future<void> navigatetoEditPage(Map item) async {
+    final route = MaterialPageRoute(
+      builder: (context) => AddTodoPage(todo: item),
+    );
+    await Navigator.push(context, route);
+    setState(() {
+      isLoading = true;
+    });
+    fetchTodo();
   }
 }
