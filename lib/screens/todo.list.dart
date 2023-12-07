@@ -31,7 +31,6 @@ class _TodooListPageState extends State<TodoListPage> {
       ),
       body: Visibility(
         visible: isLoading,
-        child: const Center(child: CircularProgressIndicator()),
         replacement: RefreshIndicator(
           onRefresh: fetchTodo,
           child: Visibility(
@@ -60,12 +59,12 @@ class _TodooListPageState extends State<TodoListPage> {
                         itemBuilder: (context) {
                           return [
                             const PopupMenuItem(
-                              child: Text('Edit'),
                               value: 'edit',
+                              child: Text('Edit'),
                             ),
                             const PopupMenuItem(
-                              child: Text('Delete'),
                               value: 'delete',
+                              child: Text('Delete'),
                             )
                           ];
                         },
@@ -75,6 +74,7 @@ class _TodooListPageState extends State<TodoListPage> {
                 }),
           ),
         ),
+        child: const Center(child: CircularProgressIndicator()),
       ),
     );
   }

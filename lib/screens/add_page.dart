@@ -29,6 +29,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
     }
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -103,7 +104,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
       "is_completed": false,
     };
     //submit the data to server
-    final url = 'https://api.nstack.in/v1/todos';
+    const url = 'https://api.nstack.in/v1/todos';
     final uri = Uri.parse(url);
     final response = await http.post(
       uri,
