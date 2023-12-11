@@ -1,16 +1,10 @@
-# todo_rest_api
+This ToDO app is CRUD app directly fetched from DB and added skin over it.
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Home Screen:<br />
+<img src="https://github.com/vyanky03/todo_rest_api_crudapp/assets/99646164/f93c2f02-93a6-466e-8ec3-1bfce3c84e5a" width="40%" height="40%"><br />
+Add ToDo:<br />
+<img src="https://github.com/vyanky03/todo_rest_api_crudapp/assets/99646164/f4184ed8-78ac-4961-b838-8ac5e8c7047e" width="40%" height="40%"><br />
+Added ToDo:<br />
+<img src="https://github.com/vyanky03/todo_rest_api_crudapp/assets/99646164/20657193-0ef7-4abd-8e0e-341ea6990002" width="40%" height="40%"><br />
+Edit ToDo<br />
+<img src="https://github.com/vyanky03/todo_rest_api_crudapp/assets/99646164/f618e6c8-6fe2-4acf-a1ff-d814029faeba" width="40%" height="40%">
